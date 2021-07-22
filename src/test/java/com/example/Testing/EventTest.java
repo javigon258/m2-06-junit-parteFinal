@@ -1,5 +1,6 @@
-package com.example.JunitTest;
+package com.example.Testing;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -107,6 +108,22 @@ class EventTest {
 		assertEquals(0, event.getAttendees().size());
 	}
 
+
+
+	@Test
+	@DisplayName("Comprueba si se borra una persona es null")
+	void testRemoveAttendeeGetNull() {
+		
+		Attendee attendee = new Attendee(1L, "Persona1", "");
+
+		event.setAttendees(null);
+		
+		event.removeAttendee(attendee);
+		assertEquals(0L, event.getAttendees().size());
+	}
+	
+	
+	
 	@Test
 	@DisplayName("Comprueba si se borra una persona es null")
 	void testRemoveAttendeeNull() {
@@ -122,21 +139,7 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("Comprueba si se borra una persona es null")
-	void testRemoveAttendeeGetNull() {
-		Event evento = new Event(1L, "Evento 1", EventType.BUSINESS, new EventNotificationServiceImpl());
-
-		evento.setAttendees(null);
-		assertEquals(null, evento.getAttendees());
-		Attendee persona1 = new Attendee(1L, "Persona1", "");
-		assertEquals(null, evento.getAttendees());
-
-		evento.addAttendee(persona1);
-		assertEquals(1, evento.getAttendees().size());
-	}
-
-	@Test
-	@DisplayName("Comprobar hay una lista de personas")
+	@DisplayName("Comprobar hay una lista de personas vacia")
 	void testAddAttendees() {
 		List<Attendee> personas = new ArrayList<Attendee>();
 
@@ -144,7 +147,7 @@ class EventTest {
 	}
 	
 	@Test
-	@DisplayName("Comprobar hay una lista de personas")
+	@DisplayName("Comprobar hay una lista de personas cuando se le paso un null")
 	void testAddAttendeesNull() {
 
 		event.addAttendees(null);
@@ -183,16 +186,32 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("Comprueba para borrar personas")
+	@DisplayName("Comprueba para borrar personas sin tener ninguno")
 	void testRemoveAttendees() {
-		fail("Not yet implemented");
+		List<Attendee> personas = new ArrayList<Attendee>();
+
+		event.removeAttendees(personas);
+	}
+	
+	@Test
+	void testRemoveAttendeesNull() {
+		event.setAttendees(null);
+		List<Attendee> personas = new ArrayList<Attendee>();
+		Attendee persona1 = new Attendee(1L, "Persona1", "");
+
+		personas.add(persona1);
+		event.removeAttendees(personas);
+		assertEquals(event.getAttendees().size(), 0);		
 	}
 
 	@Test
-	void testNotifyAssistants() {
-		fail("Not yet implemented");
-	}
+	@DisplayName("Comprobar hay una lista de personas cuando se le paso un null")
+	void testRemoveAttendeesIsNull() {
 
+		event.removeAttendees(null);
+		assertEquals(event, event);		
+	}
+	
 	@Test
 	void testAddSpeaker() {
 		assertEquals(0, event.getSpeakers().size());
