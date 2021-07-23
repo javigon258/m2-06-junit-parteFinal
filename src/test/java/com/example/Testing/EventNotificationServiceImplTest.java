@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -23,65 +25,93 @@ import com.example.service.EventNotificationServiceImpl;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventNotificationServiceImplTest {
 
-	EventNotificationService eventNotificationService = new EventNotificationServiceImpl();
+	EventNotificationService eventNotificationService ;
 	
-	Event myEvent = new Event(1L, "Evento Mock",EventType.BUSINESS, eventNotificationService);
+	Event myEvent;
 	
 	Attendee person1 = new Attendee(1L, "Manuel", "nn@mail.com");
 	Attendee person2 = new Attendee(2L, "David", "david@gmail.com");
+	Attendee person3 = new Attendee();
 
-	
-	@Test
-	@Order(2)
-    void testAnnounceEventNull() {
-		myEvent = null;
-		assertNull(myEvent);
+	@BeforeEach
+	void setUp() throws Exception{
+		eventNotificationService = new EventNotificationServiceImpl();
+		myEvent = new Event(1L, "Evento Mock",EventType.BUSINESS, eventNotificationService);
+	}
 
-/*		Exception excep = assertThrows(NullPointerException.class,
-				() -> myEvent.notifyAssistants()
-				);
-		
-		String msg = "Cannot invoke \"com.example.Event.notifyAssistants()\" because \"this.myEvent\" is null";
-		assertEquals(msg, excep.getMessage());
-		System.out.println(excep.getMessage());
-		
-		eventNotificationService.announce(myEvent);
-		assertNull(myEvent);*/
-    }
-	
 	@Test
-	@Order(4)
-    void testAnnounceEventNullAttendee() {
+	@DisplayName("Comprobamos si hay announce que sea null, y no lo añade")
+	void testAnnounceeNull() {
+		assertEquals(0,person1.getNotifications().size());
+		eventNotificationService.announce(null);
+		assertEquals(0,person1.getNotifications().size());
+	}
+	@Test
+	@DisplayName("Comprobamos si hay un attendee null")
+	void testSetAttendeesNull() {
 		myEvent.setAttendees(null);
-		assertNull(myEvent.getAttendees());
-		
-		myEvent.notifyAssistants();
-		assertNull(myEvent.getAttendees());
-    }
-	
+		eventNotificationService.announce(myEvent);
+		assertEquals(0,person1.getNotifications().size());
+	}
 	@Test
-	@Order(6)
-    void testAnnounceAttendeeIsEmpty() {
-		assertTrue(myEvent.getAttendees().isEmpty());
-		
-		myEvent.notifyAssistants();
-		assertTrue(myEvent.getAttendees().isEmpty());
-    }
-	
-	@Test
-	@Order(8)
-	void testForEachGetAttendees(){
-		for(Attendee attendee : myEvent.getAttendees()) {
-			
-		}
+	@DisplayName("Comprobamos si hay una lista")
+	void testSetAttendeesList() {
+		myEvent.setAttendees(new ArrayList<Attendee>());
+		eventNotificationService.announce(myEvent);
+		assertEquals(0,person1.getNotifications().size());
 	}
     
-    @Test
-    void testConfirmEventNull() {
-
-    	myEvent = null;
-		assertNull(myEvent);
-    }
-    
+	@Test
+	@DisplayName("Comprobamos si al añadir un attendee no se pasa null")
+	void testAddAttendeeNotNull() {
+		myEvent.addAttendee(person1);
+		eventNotificationService.announce(myEvent);
+	}
+		
+	@Test
+	@DisplayName("Comprobamos hay mas de un attende distinto, pasando el event, hay una notificacion")
+	void testMultiAttendees(){
+		myEvent.addAttendee(person1);
+		
+		myEvent.addAttendee(person3);
+		eventNotificationService.announce(myEvent);
+		assertEquals(1,person1.getNotifications().size());
+	}   
+	
+	@Test
+	@DisplayName("Comprobamos si event es null y attendee se pasa null")
+	void testAttendeeAndEventNull() throws Exception{
+		myEvent = null;
+		Attendee attendee = null;
+		eventNotificationService.confirmAttendance(myEvent, attendee);
+		assertEquals(null, myEvent);
+		assertEquals(null, attendee);
+	}
+	
+	@Test
+	@DisplayName("Comprobamos si event no es null y attendee se pasa null")
+	void testConfirmAttendeeNullEventNotNull() throws Exception{
+		Attendee attendee = null;
+		eventNotificationService.confirmAttendance(myEvent, attendee);
+		assertEquals(null, attendee);
+		assertNotNull(myEvent);
+	}
+	
+	
+	@Test
+	@DisplayName("Comprobamos si event no es  null y attendee no se pasa null")
+	void testConfirmAttendeeAndEventNotNull() throws Exception{
+		Attendee attendee = new Attendee();
+		eventNotificationService.confirmAttendance(myEvent, attendee);
+		assertEquals(1, attendee.getNotifications().size());
+	}
+	
+	@Test
+	@DisplayName("Comprobamos si event es null y attendee no se pasa null")
+	void testConfirmAttendeeNotNullAndEvenNull() throws Exception{
+		Attendee attendee = new Attendee();
+		eventNotificationService.confirmAttendance(null, attendee);
+		assertEquals(0, attendee.getNotifications().size());
+	}
 	
 }

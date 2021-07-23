@@ -35,7 +35,7 @@ class EventTest {
 	}
 
 	@Test
-
+	@DisplayName("Comprobamos si al añadir deuelve algun valor")
 	void testAddAttendee() {
 		assertEquals(0, event.getAttendees().size());
 
@@ -194,6 +194,7 @@ class EventTest {
 	}
 	
 	@Test
+	@DisplayName("Comprobamos si se borra un attendee que sea null")
 	void testRemoveAttendeesNull() {
 		event.setAttendees(null);
 		List<Attendee> personas = new ArrayList<Attendee>();
@@ -213,6 +214,7 @@ class EventTest {
 	}
 	
 	@Test
+	@DisplayName("Comprobamos si hay añadido algun speaker")
 	void testAddSpeaker() {
 		assertEquals(0, event.getSpeakers().size());
 
@@ -229,6 +231,7 @@ class EventTest {
 	}
 
 	@Test
+	@DisplayName("Comprobamos si al añadir un speaker es null, y no se añade")
 	void testAddSpeakersNull() {
 		assertEquals(0, event.getSpeakers().size());
 
@@ -238,6 +241,7 @@ class EventTest {
 	}
 
 	@Test
+	@DisplayName("Comprobamos si el total de speaker se borra")
 	void testRemoveSpeaker() {
 		assertEquals(0, event.getSpeakers().size());
 
@@ -255,6 +259,7 @@ class EventTest {
 	}
 
 	@Test
+	@DisplayName("Comprobamos si al borrar un null no se borra")
 	void testRemoveSpeakerNull() {
 		Event evento = new Event(1L, "Evento 1", EventType.BUSINESS, new EventNotificationServiceImpl());
 
